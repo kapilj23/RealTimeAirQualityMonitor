@@ -12,10 +12,25 @@ class AqiRepositoryImpl @Inject constructor(
     override suspend fun getAqi(city: String): AqiData {
         val response = apiService.getAqi(
             city = city,
-            token = "841d055361eb0be98f3b4ce2ede825bc93c6554a"  // paste your token here
+            token = "841d055361eb0be98f3b4ce2ede825bc93c6554a"
         )
         if (response.status != "ok") {
             throw Exception("City not found. Please try another city.")
+        }
+        return AqiData(
+            aqi = response.data.aqi,
+            cityName = response.data.city.name
+        )
+    }
+
+    override suspend fun getAqiByLocation(lat: Double, lng: Double): AqiData {
+        val response = apiService.getAqiByLocation(
+            lat = lat,
+            lng = lng,
+            token = "841d055361eb0be98f3b4ce2ede825bc93c6554a"
+        )
+        if (response.status != "ok") {
+            throw Exception("Unable to fetch AQI for your location.")
         }
         return AqiData(
             aqi = response.data.aqi,

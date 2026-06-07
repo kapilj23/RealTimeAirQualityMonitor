@@ -1,8 +1,8 @@
 package com.kapil.aqiapp.presentation.viewmodel
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kapil.aqiapp.domain.model.AqiData
+import com.kapil.aqiapp.data.remote.LocationHelper
+import com.kapil.aqiapp.domain.usecase.GetAqiByLocationUseCase
 import com.kapil.aqiapp.domain.usecase.GetAqiUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,11 +12,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AqiViewModel @Inject constructor(
-    private val getAqiUseCase: GetAqiUseCase
+    private val getAqiUseCase: GetAqiUseCase,
+    private val getAqiByLocationUseCase: GetAqiByLocationUseCase,
+    private val locationHelper: LocationHelper
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AqiUiState>(AqiUiState.Loading)
     val uiState: StateFlow<AqiUiState> = _uiState
+
+    private val _locationPermissionNeeded = MutableStateFlow(false)
+    val locationPermissionNeeded: StateFlow<Boolean> = _locationPermissionNeeded
 
     fun fetchAqi(city: String) {
         viewModelScope.launch {
@@ -29,10 +34,27 @@ class AqiViewModel @Inject constructor(
             }
         }
     }
-}
 
-sealed class AqiUiState {
-    object Loading : AqiUiState()
-    data class Success(val data: AqiData) : AqiUiState()
-    data class Error(val message: String) : AqiUiState()
+    fun fetchAqiByLocation() {
+        viewModelScope.launch {
+            _uiState.value = AqiUiState.Loading
+            try {
+                val (lat, lng) = locationHelper.getCurrentLatLng()
+                val data = getAqiByLocationUseCase(lat, lng)
+                _uiState.value = AqiUiState.Success(data)
+            } catch (e: Exception) {
+                _uiState.value = AqiUiState.Error(e.message ?: "Location fetch failed")
+            }
+        }
+    }
+
+    fun onLocationPermissionGranted() {
+        _locationPermissionNeeded.value = false
+        fetchAqiByLocation()
+    }
+
+    fun onLocationPermissionDenied() {
+        _locationPermissionNeeded.value = false
+        fetchAqi("bareilly")
+    }
 }

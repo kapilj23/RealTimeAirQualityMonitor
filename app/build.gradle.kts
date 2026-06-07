@@ -61,7 +61,7 @@ dependencies {
 
     // Lifecycle
     implementation(libs.lifecycle.viewmodel)
-
+    implementation(libs.play.services.location)
     // Coroutines
     implementation(libs.coroutines)
 

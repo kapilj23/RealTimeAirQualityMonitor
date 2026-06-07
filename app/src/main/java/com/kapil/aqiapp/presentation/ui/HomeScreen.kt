@@ -1,8 +1,13 @@
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,8 +28,18 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
     var cityInput by remember { mutableStateOf("") }
 
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            viewModel.onLocationPermissionGranted()
+        } else {
+            viewModel.onLocationPermissionDenied()
+        }
+    }
+
     LaunchedEffect(Unit) {
-        viewModel.fetchAqi("bareilly")
+        locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
     val aqi = if (uiState is AqiUiState.Success) {
@@ -75,12 +90,31 @@ fun HomeScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.padding(horizontal = 24.dp)
                 ) {
-                    Text(
-                        text = data.cityName,
-                        color = Color.White,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Medium
-                    )
+                    // City name + Location button
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = data.cityName,
+                            color = Color.White,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                        IconButton(
+                            onClick = {
+                                locationPermissionLauncher.launch(
+                                    Manifest.permission.ACCESS_FINE_LOCATION
+                                )
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = "Get location",
+                                tint = Color.White
+                            )
+                        }
+                    }
 
                     // Search Bar
                     Row(
@@ -147,6 +181,38 @@ fun HomeScreen(
                         fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold
                     )
+
+                    // Health Tip Card
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFF2A2A3E)
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = "💡 Health Tip",
+                                color = Color.White,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = when {
+                                    aqi <= 50 -> "Air quality is great! Perfect time for outdoor activities."
+                                    aqi <= 100 -> "Acceptable air quality. Sensitive people should limit outdoor exposure."
+                                    aqi <= 150 -> "Sensitive groups should reduce outdoor activities. Consider wearing a mask."
+                                    aqi <= 200 -> "Reduce outdoor activities. Keep windows closed."
+                                    aqi <= 300 -> "Health alert! Avoid all outdoor activities. Wear N95 mask if necessary."
+                                    else -> "Emergency! Stay indoors, seal windows. Seek medical help if unwell."
+                                },
+                                color = Color.LightGray,
+                                fontSize = 14.sp
+                            )
+                        }
+                    }
                 }
             }
 
@@ -156,10 +222,7 @@ fun HomeScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier.padding(24.dp)
                 ) {
-                    Text(
-                        text = "🔍",
-                        fontSize = 48.sp
-                    )
+                    Text(text = "🔍", fontSize = 48.sp)
                     Text(
                         text = "City Not Found",
                         color = Color.White,
@@ -171,12 +234,8 @@ fun HomeScreen(
                         color = Color.Gray,
                         fontSize = 14.sp
                     )
-
-                    // Search bar error state mein bhi dikhao
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
@@ -207,7 +266,27 @@ fun HomeScreen(
                         ) {
                             Text("Search", color = Color(0xFF1A1A2E))
                         }
-                    }}}
+                    }
+                    Button(
+                        onClick = {
+                            locationPermissionLauncher.launch(
+                                Manifest.permission.ACCESS_FINE_LOCATION
+                            )
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF2A2A3E)
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.LocationOn,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Use My Location", color = Color.White)
+                    }
+                }
+            }
         }
     }
 }

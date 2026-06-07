@@ -10,4 +10,11 @@ interface AqiApiService {
         @Path("city") city: String,
         @Query("token") token: String
     ): AqiDto
+    // Naya endpoint — lat/lng se AQI
+    @GET("feed/geo:{lat};{lng}/")
+    suspend fun getAqiByLocation(
+        @Path("lat") lat: Double,
+        @Path("lng") lng: Double,
+        @Query("token") token: String
+    ): AqiDto
 }
