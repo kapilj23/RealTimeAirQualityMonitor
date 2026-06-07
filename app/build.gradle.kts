@@ -7,13 +7,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.aqiapp"
+    namespace = "com.kapil.aqiapp"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.example.aqiapp"
+        applicationId = "com.kapil.aqiapp"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -70,7 +70,7 @@ dependencies {
     implementation(libs.okhttp.logging)
 
     implementation(libs.androidx.room.ktx)
-
+    implementation(libs.hilt.navigation.compose)
     ksp(libs.androidx.room.compiler)
     implementation(libs.hilt.android)
 
