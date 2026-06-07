@@ -8,7 +8,8 @@ data class AqiDto(
 data class AqiDataDto(
     val aqi: Int,
     val city: CityDto,
-    val iaqi: IaqiDto?  // pollutants data
+    val iaqi: IaqiDto?,
+    val forecast: ForecastDto?
 )
 
 data class CityDto(
@@ -26,4 +27,21 @@ data class IaqiDto(
 
 data class PollutantDto(
     val v: Double
+)
+data class ForecastDto(
+    val daily: DailyForecastDto?
+)
+
+data class DailyForecastDto(
+    val pm25: List<ForecastDayDto>?,
+    val pm10: List<ForecastDayDto>?,
+    val o3: List<ForecastDayDto>?,
+    val uvi: List<ForecastDayDto>?
+)
+
+data class ForecastDayDto(
+    val avg: Int,
+    val day: String,  // "2024-01-15" format
+    val max: Int,
+    val min: Int
 )

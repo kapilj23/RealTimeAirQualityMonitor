@@ -3,7 +3,8 @@ package com.kapil.aqiapp.domain.model
 data class AqiData(
     val aqi: Int,
     val cityName: String,
-    val pollutants: Pollutants
+    val pollutants: Pollutants,
+    val forecast: List<ForecastDay>
 )
 
 data class Pollutants(
@@ -13,4 +14,11 @@ data class Pollutants(
     val o3: Double?,
     val co: Double?,
     val so2: Double?
+)
+
+data class ForecastDay(
+    val day: String,
+    val avgAqi: Int,
+    val maxAqi: Int,
+    val minAqi: Int
 )

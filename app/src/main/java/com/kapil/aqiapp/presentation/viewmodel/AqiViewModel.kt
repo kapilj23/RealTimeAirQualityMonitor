@@ -28,6 +28,8 @@ class AqiViewModel @Inject constructor(
             _uiState.value = AqiUiState.Loading
             try {
                 val data = getAqiUseCase(city)
+                android.util.Log.d("AQI", "Forecast size: ${data.forecast.size}")
+                android.util.Log.d("AQI", "Forecast: ${data.forecast}")
                 _uiState.value = AqiUiState.Success(data)
             } catch (e: Exception) {
                 _uiState.value = AqiUiState.Error(e.message ?: "Something went wrong")

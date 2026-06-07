@@ -5,7 +5,9 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
@@ -89,6 +91,7 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.padding(horizontal = 24.dp)
+                        .verticalScroll(rememberScrollState())
                 ) {
                     // City name + Location button
                     Row(
@@ -266,6 +269,78 @@ fun HomeScreen(
                             }
                         }
                     }
+                    // Forecast Card
+
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color(0xFF2A2A3E)
+                            )
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                Text(
+                                    text = "📅 5-Day Forecast",
+                                    color = Color.White,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+
+                                data.forecast.take(5).forEach { day ->
+                                    val dayColor = when {
+                                        day.avgAqi <= 50 -> Color(0xFF4CAF50)
+                                        day.avgAqi <= 100 -> Color(0xFFFFEB3B)
+                                        day.avgAqi <= 150 -> Color(0xFFFF9800)
+                                        day.avgAqi <= 200 -> Color(0xFFF44336)
+                                        day.avgAqi <= 300 -> Color(0xFF9C27B0)
+                                        else -> Color(0xFF7B1FA2)
+                                    }
+
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = day.day,
+                                            color = Color.LightGray,
+                                            fontSize = 14.sp,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        Text(
+                                            text = "↓${day.minAqi}",
+                                            color = Color(0xFF4CAF50),
+                                            fontSize = 13.sp
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = "↑${day.maxAqi}",
+                                            color = Color(0xFFF44336),
+                                            fontSize = 13.sp
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Box(
+                                            modifier = Modifier
+                                                .clip(CircleShape)
+                                                .background(dayColor)
+                                                .padding(horizontal = 12.dp, vertical = 4.dp)
+                                        ) {
+                                            Text(
+                                                text = "${day.avgAqi}",
+                                                color = Color.White,
+                                                fontSize = 13.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        }
+                                    }
+                                    HorizontalDivider(color = Color(0xFF3A3A4E))
+                                }
+                            }
+                        }
+
+
                 }
             }
 

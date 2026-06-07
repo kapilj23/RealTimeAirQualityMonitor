@@ -3,6 +3,7 @@ package com.kapil.aqiapp.data.repository
 import com.kapil.aqiapp.data.remote.AqiApiService
 import com.kapil.aqiapp.data.remote.AqiDto
 import com.kapil.aqiapp.domain.model.AqiData
+import com.kapil.aqiapp.domain.model.ForecastDay
 import com.kapil.aqiapp.domain.model.Pollutants
 import com.kapil.aqiapp.domain.repository.AqiRepository
 import javax.inject.Inject
@@ -35,6 +36,17 @@ class AqiRepositoryImpl @Inject constructor(
     }
 }
 private fun mapToDomain(response: AqiDto): AqiData {
+    android.util.Log.d("AQI", "Raw forecast: ${response.data.forecast}")
+    android.util.Log.d("AQI", "PM25 forecast: ${response.data.forecast?.daily?.pm25}")
+    val forecastList = response.data.forecast?.daily?.pm25?.map { day ->
+        ForecastDay(
+            day = day.day,
+            avgAqi = day.avg,
+            maxAqi = day.max,
+            minAqi = day.min
+        )
+    } ?: emptyList()
+
     return AqiData(
         aqi = response.data.aqi,
         cityName = response.data.city.name,
@@ -45,6 +57,7 @@ private fun mapToDomain(response: AqiDto): AqiData {
             o3 = response.data.iaqi?.o3?.v,
             co = response.data.iaqi?.co?.v,
             so2 = response.data.iaqi?.so2?.v
-        )
+        ),
+        forecast = forecastList
     )
 }
