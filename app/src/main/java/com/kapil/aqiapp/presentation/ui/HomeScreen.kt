@@ -213,6 +213,59 @@ fun HomeScreen(
                             )
                         }
                     }
+
+
+                    // Pollutants Breakdown Card
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFF2A2A3E)
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Text(
+                                text = "🧪 Pollutants",
+                                color = Color.White,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            val pollutants = data.pollutants
+
+                            listOf(
+                                Triple("PM2.5", pollutants.pm25, "μg/m³"),
+                                Triple("PM10", pollutants.pm10, "μg/m³"),
+                                Triple("NO₂", pollutants.no2, "ppb"),
+                                Triple("O₃", pollutants.o3, "ppb"),
+                                Triple("CO", pollutants.co, "ppm"),
+                                Triple("SO₂", pollutants.so2, "ppb")
+                            ).forEach { (name, value, unit) ->
+                                if (value != null) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = name,
+                                            color = Color.LightGray,
+                                            fontSize = 14.sp
+                                        )
+                                        Text(
+                                            text = "${value} $unit",
+                                            color = Color.White,
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                    }
+                                    HorizontalDivider(color = Color(0xFF3A3A4E))
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
