@@ -21,6 +21,7 @@ fun HomeScreen(
     viewModel: AqiViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var cityInput by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         viewModel.fetchAqi("bareilly")
@@ -32,24 +33,24 @@ fun HomeScreen(
 
     val aqiColor by animateColorAsState(
         targetValue = when {
-            aqi <= 50 -> Color(0xFF4CAF50)   // Green - Good
-            aqi <= 100 -> Color(0xFFFFEB3B)  // Yellow - Moderate
-            aqi <= 150 -> Color(0xFFFF9800)  // Orange - Unhealthy
-            aqi <= 200 -> Color(0xFFF44336)  // Red - Very Unhealthy
-            aqi <= 300 -> Color(0xFF9C27B0)  // Purple - Hazardous
-            else -> Color(0xFF7B1FA2)         // Dark Purple - Severe
+            aqi <= 50 -> Color(0xFF4CAF50)
+            aqi <= 100 -> Color(0xFFFFEB3B)
+            aqi <= 150 -> Color(0xFFFF9800)
+            aqi <= 200 -> Color(0xFFF44336)
+            aqi <= 300 -> Color(0xFF9C27B0)
+            else -> Color(0xFF7B1FA2)
         },
         animationSpec = tween(1000),
         label = "aqi_color"
     )
 
     val aqiLabel = when {
-        aqi <= 50 -> "Good"
-        aqi <= 100 -> "Moderate"
-        aqi <= 150 -> "Unhealthy"
-        aqi <= 200 -> "Very Unhealthy"
-        aqi <= 300 -> "Hazardous"
-        else -> "Severe"
+        aqi <= 50 -> "Good 😊"
+        aqi <= 100 -> "Moderate 😐"
+        aqi <= 150 -> "Unhealthy 😷"
+        aqi <= 200 -> "Very Unhealthy 🤢"
+        aqi <= 300 -> "Hazardous ☠️"
+        else -> "Severe ☣️"
     }
 
     Box(
@@ -71,7 +72,8 @@ fun HomeScreen(
                 val data = (uiState as AqiUiState.Success).data
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.padding(horizontal = 24.dp)
                 ) {
                     Text(
                         text = data.cityName,
@@ -80,6 +82,42 @@ fun HomeScreen(
                         fontWeight = FontWeight.Medium
                     )
 
+                    // Search Bar
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = cityInput,
+                            onValueChange = { cityInput = it },
+                            placeholder = {
+                                Text("Search city...", color = Color.Gray)
+                            },
+                            singleLine = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                focusedBorderColor = Color.White,
+                                unfocusedBorderColor = Color.Gray
+                            ),
+                            modifier = Modifier.weight(1f)
+                        )
+                        Button(
+                            onClick = {
+                                if (cityInput.isNotBlank()) {
+                                    viewModel.fetchAqi(cityInput)
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.White
+                            )
+                        ) {
+                            Text("Search", color = Color(0xFF1A1A2E))
+                        }
+                    }
+
+                    // AQI Circle
                     Box(
                         modifier = Modifier
                             .size(200.dp)
@@ -102,6 +140,7 @@ fun HomeScreen(
                         }
                     }
 
+                    // AQI Label
                     Text(
                         text = aqiLabel,
                         color = aqiColor,
@@ -112,12 +151,63 @@ fun HomeScreen(
             }
 
             is AqiUiState.Error -> {
-                val message = (uiState as AqiUiState.Error).message
-                Text(
-                    text = "Error: $message",
-                    color = Color.Red
-                )
-            }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.padding(24.dp)
+                ) {
+                    Text(
+                        text = "🔍",
+                        fontSize = 48.sp
+                    )
+                    Text(
+                        text = "City Not Found",
+                        color = Color.White,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Please check the city name and try again",
+                        color = Color.Gray,
+                        fontSize = 14.sp
+                    )
+
+                    // Search bar error state mein bhi dikhao
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = cityInput,
+                            onValueChange = { cityInput = it },
+                            placeholder = {
+                                Text("Search city...", color = Color.Gray)
+                            },
+                            singleLine = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                focusedBorderColor = Color.White,
+                                unfocusedBorderColor = Color.Gray
+                            ),
+                            modifier = Modifier.weight(1f)
+                        )
+                        Button(
+                            onClick = {
+                                if (cityInput.isNotBlank()) {
+                                    viewModel.fetchAqi(cityInput)
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.White
+                            )
+                        ) {
+                            Text("Search", color = Color(0xFF1A1A2E))
+                        }
+                    }}}
         }
     }
 }

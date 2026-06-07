@@ -14,6 +14,9 @@ class AqiRepositoryImpl @Inject constructor(
             city = city,
             token = "841d055361eb0be98f3b4ce2ede825bc93c6554a"  // paste your token here
         )
+        if (response.status != "ok") {
+            throw Exception("City not found. Please try another city.")
+        }
         return AqiData(
             aqi = response.data.aqi,
             cityName = response.data.city.name
