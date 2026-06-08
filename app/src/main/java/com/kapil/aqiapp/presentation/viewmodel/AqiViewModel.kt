@@ -8,6 +8,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,9 +30,11 @@ class AqiViewModel @Inject constructor(
             _uiState.value = AqiUiState.Loading
             try {
                 val data = getAqiUseCase(city)
-                android.util.Log.d("AQI", "Forecast size: ${data.forecast.size}")
-                android.util.Log.d("AQI", "Forecast: ${data.forecast}")
                 _uiState.value = AqiUiState.Success(data)
+            } catch (e: UnknownHostException) {
+                _uiState.value = AqiUiState.NoInternet
+            } catch (e: SocketTimeoutException) {
+                _uiState.value = AqiUiState.NoInternet
             } catch (e: Exception) {
                 _uiState.value = AqiUiState.Error(e.message ?: "Something went wrong")
             }
@@ -44,6 +48,10 @@ class AqiViewModel @Inject constructor(
                 val (lat, lng) = locationHelper.getCurrentLatLng()
                 val data = getAqiByLocationUseCase(lat, lng)
                 _uiState.value = AqiUiState.Success(data)
+            } catch (e: UnknownHostException) {
+                _uiState.value = AqiUiState.NoInternet
+            } catch (e: SocketTimeoutException) {
+                _uiState.value = AqiUiState.NoInternet
             } catch (e: Exception) {
                 _uiState.value = AqiUiState.Error(e.message ?: "Location fetch failed")
             }

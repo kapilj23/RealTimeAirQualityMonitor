@@ -377,6 +377,45 @@ fun HomeScreen(
                         }
                     }
                 }
+                is AqiUiState.NoInternet -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = Modifier.padding(24.dp)
+                        ) {
+                            Text(text = "📡", fontSize = 64.sp)
+                            Text(
+                                text = "No Internet Connection",
+                                color = Color.White,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "Please check your connection and try again",
+                                color = Color.Gray,
+                                fontSize = 14.sp
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Button(
+                                onClick = {
+                                    locationPermissionLauncher.launch(
+                                        Manifest.permission.ACCESS_FINE_LOCATION
+                                    )
+                                },
+                                shape = RoundedCornerShape(12.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFF2A2A3E)
+                                )
+                            ) {
+                                Text("Retry", color = Color.White)
+                            }
+                        }
+                    }
+                }
             }
         }
     }

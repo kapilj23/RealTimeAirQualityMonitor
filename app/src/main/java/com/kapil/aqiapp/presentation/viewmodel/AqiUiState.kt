@@ -6,4 +6,5 @@ sealed class AqiUiState {
     object Loading : AqiUiState()
     data class Success(val data: AqiData) : AqiUiState()
     data class Error(val message: String) : AqiUiState()
+    object NoInternet : AqiUiState()
 }
