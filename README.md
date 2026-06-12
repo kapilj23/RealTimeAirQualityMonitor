@@ -122,5 +122,3 @@ This app uses the [WAQI API](https://waqi.info/) — World Air Quality Index.
 **Kapil Joshi** — Android Developer
 
 [![GitHub](https://img.shields.io/badge/GitHub-kapilj23-black?logo=github)](https://github.com/kapilj23)
-
-This app follows **Clean Architecture** with 3 layers:
