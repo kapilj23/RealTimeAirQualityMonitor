@@ -28,8 +28,12 @@ import com.kapil.aqiapp.presentation.viewmodel.AqiViewModel
 @Composable
 fun HomeScreen(
     viewModel: AqiViewModel = hiltViewModel()
+    // HomeScreen requires an AqiViewModel instance
+// Hilt creates and manages the ViewModel lifecycle automatically
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    // Observe ViewModel state — UI updates automatically whenever state changes
+
     var cityInput by remember { mutableStateOf("") }
 
     val locationPermissionLauncher = rememberLauncherForActivityResult(

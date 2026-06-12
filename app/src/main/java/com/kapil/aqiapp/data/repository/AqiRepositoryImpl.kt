@@ -36,8 +36,7 @@ class AqiRepositoryImpl @Inject constructor(
     }
 }
 private fun mapToDomain(response: AqiDto): AqiData {
-    android.util.Log.d("AQI", "Raw forecast: ${response.data.forecast}")
-    android.util.Log.d("AQI", "PM25 forecast: ${response.data.forecast?.daily?.pm25}")
+
     val forecastList = response.data.forecast?.daily?.pm25?.map { day ->
         ForecastDay(
             day = day.day,

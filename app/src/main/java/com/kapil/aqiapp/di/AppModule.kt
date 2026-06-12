@@ -21,9 +21,7 @@ object AppModule {
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
+            .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })
             .build()
     }
 
@@ -31,16 +29,17 @@ object AppModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://api.waqi.info/")
+            .baseUrl("https://api.waqi.info/")//sari requests is URL se start hogi
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
-    @Provides
-    @Singleton
+    @Provides // Tells Hilt to use this method whenever AqiApiService instance is needed
+    @Singleton // // Ensures only one instance of AqiApiService exists throughout the app
     fun provideAqiApiService(retrofit: Retrofit): AqiApiService {
         return retrofit.create(AqiApiService::class.java)
+        // // Creates and returns an AqiApiService instance to AqiRepository
     }
 
     @Provides

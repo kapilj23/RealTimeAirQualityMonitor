@@ -12,6 +12,9 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.inject.Inject
 
+// ViewModel provides HomeScreen with:
+// uiState   → determines what to display
+// functions → handles user actions
 @HiltViewModel
 class AqiViewModel @Inject constructor(
     private val getAqiUseCase: GetAqiUseCase,
