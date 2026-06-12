@@ -1,4 +1,4 @@
-# 🌫️ AQI App
+# 🌫️ RealTimeAirQualityMonitor
 
 A real-time Air Quality Index tracker built with **Jetpack Compose** and **Clean Architecture**.
 
